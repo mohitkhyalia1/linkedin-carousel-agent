@@ -1,5 +1,8 @@
 import streamlit as st
 import json
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
 from agents.analyzer import analyze_references
 from agents.writer import write_carousel
 from agents.reviewer import review_carousel
@@ -32,6 +35,47 @@ reference_text = st.text_area(
 )
 
 num_slides = st.slider("Number of slides (excluding CTA)", min_value=3, max_value=8, value=5)
+
+def create_pdf(carousel_data):
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer)
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    title = carousel_data.get("topic", "LinkedIn Carousel")
+
+    elements.append(Paragraph(title, styles['Title']))
+    elements.append(Spacer(1, 20))
+
+    for i, slide in enumerate(carousel_data["slides"], start=1):
+
+        elements.append(
+            Paragraph(f"<b>Slide {i}: {slide['title']}</b>", styles['Heading2'])
+        )
+
+        elements.append(
+            Paragraph(
+                slide["content"].replace("\n", "<br/>"),
+                styles['BodyText']
+            )
+        )
+
+        elements.append(
+            Paragraph(
+                f"<b>Visual Idea:</b> {slide['visual']}",
+                styles['Italic']
+            )
+        )
+
+        elements.append(Spacer(1, 20))
+
+    doc.build(elements)
+
+    buffer.seek(0)
+
+    return buffer
 
 # --- Generate Button ---
 if st.button("🚀 Generate Carousel", type="primary"):
@@ -91,6 +135,15 @@ if st.button("🚀 Generate Carousel", type="primary"):
                 st.caption(f"🖼️ Visual idea: {slide.get('visual', 'N/A')}")
 
         st.divider()
+
+        pdf_file = create_pdf(final_carousel)
+
+        st.download_button(
+            label="📄 Download Carousel as PDF",
+            data=pdf_file,
+            file_name="carousel.pdf",
+            mime="application/pdf"
+        )
 
         # Download as JSON
         st.download_button(
