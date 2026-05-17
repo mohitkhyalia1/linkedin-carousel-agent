@@ -5,6 +5,7 @@ A GenAI workflow that takes a topic and reference LinkedIn carousels, then gener
 Built with **Python**, **Streamlit**, and **Gemini API**.
 
 🔗 **Live Demo:** https://linkedin-carousel-agent.streamlit.app/
+<br>
 📁 **GitHub:** https://github.com/mohitkhyalia1/linkedin-carousel-agent
 
 ---
