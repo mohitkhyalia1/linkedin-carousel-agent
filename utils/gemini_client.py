@@ -20,12 +20,23 @@ def load_env_file():
                 os.environ[key] = value
 
 
-# Configure the Gemini client using the API key from environment or .env file
-def get_model():
+def get_api_key():
     load_env_file()
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        raise ValueError("GEMINI_API_KEY environment variable is not set.")
+        try:
+            import streamlit as st
+            api_key = st.secrets.get("GEMINI_API_KEY")
+        except Exception:
+            api_key = None
+    return api_key
+
+
+# Configure the Gemini client using the API key from environment, .env, or Streamlit secrets
+def get_model():
+    api_key = get_api_key()
+    if not api_key:
+        raise ValueError("GEMINI_API_KEY environment variable or Streamlit secret is not set.")
     genai.configure(api_key=api_key)
     return genai.GenerativeModel("gemini-flash-latest")
 

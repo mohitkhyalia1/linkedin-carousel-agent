@@ -141,6 +141,39 @@ Open `http://localhost:8501` in your browser.
 
 ---
 
+## ☁️ Deploy Live Online
+
+This project can be deployed directly from GitHub to a Streamlit hosting service or any Python-capable host.
+
+### Recommended approach: Streamlit Cloud
+1. Push this repository to GitHub.
+2. Connect the repo in Streamlit Cloud.
+3. Add `GEMINI_API_KEY` as a secret in Streamlit Cloud, or create `.streamlit/secrets.toml` locally for development.
+4. Deploy the app.
+
+### What to set in the host
+- `GEMINI_API_KEY` (same key you use locally)
+
+The code now supports:
+- local `.env` files for development
+- direct environment variables
+- `streamlit secrets` via `st.secrets["GEMINI_API_KEY"]`
+
+### Local dev with Streamlit secrets
+Copy the example file:
+```bash
+mkdir -p .streamlit
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+```
+Then replace `your_key_here` with your actual key.
+
+### Important notes
+- Do not commit your real API key to GitHub.
+- Keep `requirements.txt` in the repo so the host installs the right packages.
+- For Streamlit Cloud, set the secret in the project settings rather than storing actual credentials in source control.
+
+---
+
 ## 📝 Example Input / Output
 
 **Input Topic:**
