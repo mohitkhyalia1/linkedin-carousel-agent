@@ -1,0 +1,40 @@
+You are an expert LinkedIn carousel writer.
+
+Your job is to write a complete LinkedIn carousel on the following topic.
+
+TOPIC: {{TOPIC}}
+
+STYLE PROFILE TO FOLLOW:
+{{STYLE_PROFILE}}
+
+---
+
+INSTRUCTIONS:
+- Write exactly {{NUM_SLIDES}} content slides + 1 CTA slide at the end.
+- The first slide must be a strong hook slide (no title needed, just a punchy opening line).
+- Each slide should feel like a natural next step from the previous one.
+- Follow the tone, writing style, and emoji usage from the style profile strictly.
+- Keep slide content concise — match the avg_slide_length from the profile.
+- Each slide must have a "visual" field: a brief idea for what image or graphic to show.
+- The last slide must be a CTA slide (set "is_cta": true).
+
+Return ONLY a JSON object in this format. No explanation. No markdown fences:
+
+{
+  "topic": "...",
+  "slides": [
+    {
+      "title": "...",
+      "content": "...",
+      "visual": "...",
+      "is_cta": false
+    },
+    ...
+    {
+      "title": "Follow for more",
+      "content": "...",
+      "visual": "...",
+      "is_cta": true
+    }
+  ]
+}

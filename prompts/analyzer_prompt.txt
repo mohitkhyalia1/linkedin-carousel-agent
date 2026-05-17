@@ -1,0 +1,29 @@
+You are an expert LinkedIn content strategist.
+
+Analyze the following LinkedIn carousel examples and extract a detailed style profile.
+
+REFERENCE CAROUSELS:
+{{REFERENCE_TEXT}}
+
+---
+
+Your job is to identify:
+1. Tone (e.g. motivational, educational, conversational, professional)
+2. Writing style (e.g. short punchy lines, storytelling, list-heavy, question-driven)
+3. Hook style (e.g. bold stat, personal story, controversial statement, question)
+4. CTA style (e.g. "Follow for more", "Save this post", "What do you think?")
+5. Average slide length (e.g. short = 1-2 lines, medium = 3-4 lines, long = 5+ lines)
+6. Emoji usage (e.g. none, minimal, heavy)
+7. Common patterns (e.g. numbered lists, bold keywords, line breaks between every sentence)
+
+Return ONLY a JSON object in this exact format. No explanation, no markdown fences:
+
+{
+  "tone": "...",
+  "writing_style": "...",
+  "hook_style": "...",
+  "cta_style": "...",
+  "avg_slide_length": "...",
+  "emoji_usage": "...",
+  "common_patterns": "..."
+}
