@@ -140,5 +140,8 @@ streamlit run app.py
 
 ## Author
 
-Mohit Khyalia — IIT Bombay
-Built as a Generative AI internship assignment.
+### Mohit Khyalia
+#### IIT Bombay
+
+- Built as a Generative AI internship assignment.
+- Demonstrates: modular AI workflows, prompt engineering, multi-step generation, and structured outputs.
