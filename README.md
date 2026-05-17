@@ -1,190 +1,95 @@
 # 🎠 LinkedIn Carousel Generation Agent
 
-A GenAI workflow that takes a topic + reference examples and generates a complete, style-matched LinkedIn carousel — slide by slide — using a 3-step AI pipeline.
+A GenAI workflow that takes a topic and reference LinkedIn carousels, then generates a complete style-matched carousel slide-by-slide using a 3-step AI pipeline.
 
-Built with Python, Streamlit, and the Gemini API.
+Built with **Python**, **Streamlit**, and **Gemini API**.
 
----
-
-## 🚀 Features
-
-- **Style-aware generation** — analyzes your reference carousels and matches their tone, hook style, and writing patterns
-- **Slide-by-slide output** — generates each slide with a title, content, and visual idea
-- **Self-review step** — a reviewer agent improves weak slides before final output
-- **Downloadable JSON** — export the full carousel for further use
-- **Simple, clean UI** — no clutter, just input → generate → read
+🔗 **Live Demo:** https://linkedin-carousel-agent.streamlit.app/
+📁 **GitHub:** https://github.com/mohitkhyalia1/linkedin-carousel-agent
 
 ---
 
-## 🔁 Workflow Explanation
+## How It Works
 
 ```
-User Input (topic + references)
+User Input (topic + reference carousels)
         │
         ▼
-  [1] ANALYZER
-  Reads reference carousels
-  Extracts: tone, hook style, CTA style,
-            slide length, emoji usage
+  [1] ANALYZER  →  extracts tone, hook style, CTA style, slide structure
         │
-        ▼ style_profile (JSON)
-  [2] WRITER
-  Generates carousel slide-by-slide
-  Uses topic + style_profile to stay on-brand
+        ▼  style_profile (JSON)
+  [2] WRITER    →  generates slides with title, content, visual idea
         │
-        ▼ raw_carousel (JSON)
-  [3] REVIEWER
-  Checks for: weak hooks, long slides,
-              repetition, off-brand tone
-  Rewrites only what needs fixing
+        ▼  draft_carousel (JSON)
+  [3] REVIEWER  →  fixes weak hooks, long slides, repetition
         │
-        ▼ final_carousel (JSON)
-  Displayed in Streamlit UI
+        ▼
+  Final Carousel
 ```
 
 ---
 
-## 🧩 Component Breakdown
+## Why Python Instead of Gumloop?
 
-### `agents/analyzer.py`
-Reads reference carousel text and returns a structured JSON style profile.
-Asks Gemini to extract tone, hook style, CTA style, slide length, etc.
-
-### `agents/writer.py`
-Takes the topic + style profile and generates the full carousel.
-Each slide has: title, content, visual idea, and a CTA flag.
-
-### `agents/reviewer.py`
-Reviews the generated carousel against the style profile.
-Fixes weak hooks, long slides, repeated points, and vague visuals.
-
-### `utils/gemini_client.py`
-Simple wrapper around the Gemini API. One function: `call_gemini(prompt)`.
-
-### `utils/parser.py`
-Extracts JSON from Gemini's response text. Handles markdown code fences.
-
-### `prompts/`
-Plain text prompt templates with `{{VARIABLE}}` placeholders.
-Keeping prompts in `.txt` files makes them easy to edit without touching Python.
+The assignment was inspired by Gumloop-style modular AI workflows. I implemented the equivalent pipeline directly in Python, which gave more control over prompt engineering and JSON chaining between stages. The architecture still follows the same node-based design — each agent is an independent, reusable component with a clear input/output contract.
 
 ---
 
-## 📁 Folder Structure
+## Features
+
+- Analyzes reference carousels and extracts writing style
+- Generates slides with title, content, and a visual idea per slide
+- Includes a CTA slide automatically
+- Reviewer step improves weak slides before final output
+- Download carousel as JSON
+
+---
+
+## Folder Structure
 
 ```
 linkedin-carousel-agent/
-│
-├── app.py                  # Streamlit UI
+├── app.py
 ├── requirements.txt
-├── README.md
-│
 ├── agents/
-│   ├── analyzer.py         # Style extraction agent
-│   ├── writer.py           # Carousel generation agent
-│   ├── reviewer.py         # Review & improvement agent
-│
+│   ├── analyzer.py
+│   ├── writer.py
+│   └── reviewer.py
 ├── prompts/
 │   ├── analyzer_prompt.txt
 │   ├── writer_prompt.txt
-│   ├── reviewer_prompt.txt
-│
-├── utils/
-│   ├── gemini_client.py    # Gemini API wrapper
-│   ├── parser.py           # JSON extractor
+│   └── reviewer_prompt.txt
+└── utils/
+    ├── gemini_client.py
+    └── parser.py
 ```
 
 ---
 
-## ⚙️ Installation
+## Setup
 
-**1. Clone the repo**
-```bash
-git clone https://github.com/yourusername/linkedin-carousel-agent.git
-cd linkedin-carousel-agent
-```
-
-**2. Create a virtual environment (recommended)**
-```bash
-python -m venv venv
-source venv/bin/activate        # Mac/Linux
-venv\Scripts\activate           # Windows
-```
-
-**3. Install dependencies**
 ```bash
 pip install -r requirements.txt
 ```
 
-**4. Set your Gemini API key**
-Option A: set it in your terminal/session
-```bash
-export GEMINI_API_KEY=your_key_here        # Mac/Linux
-set GEMINI_API_KEY=your_key_here           # Windows CMD
-```
-Option B: create a local `.env` file in the project root
-```bash
-echo GEMINI_API_KEY=your_key_here > .env
-# then edit .env and replace your_key_here with your actual key
-```
-Get your free key at: https://aistudio.google.com/app/apikey
+Set your Gemini API key (get one free at [aistudio.google.com](https://aistudio.google.com/app/apikey)):
 
----
+```bash
+export GEMINI_API_KEY=your_key_here
+```
 
-## ▶️ How to Run
+Run the app:
 
 ```bash
 streamlit run app.py
 ```
 
-Open `http://localhost:8501` in your browser.
-
 ---
 
-## ☁️ Deploy Live Online
+## Example Output
 
-This project can be deployed directly from GitHub to a Streamlit hosting service or any Python-capable host.
+**Topic:** 5 habits that made me a better software engineer
 
-### Recommended approach: Streamlit Cloud
-1. Push this repository to GitHub.
-2. Connect the repo in Streamlit Cloud.
-3. Add `GEMINI_API_KEY` as a secret in Streamlit Cloud, or create `.streamlit/secrets.toml` locally for development.
-4. Deploy the app.
-
-### What to set in the host
-- `GEMINI_API_KEY` (same key you use locally)
-
-The code now supports:
-- local `.env` files for development
-- direct environment variables
-- `streamlit secrets` via `st.secrets["GEMINI_API_KEY"]`
-
-### Local dev with Streamlit secrets
-Copy the example file:
-```bash
-mkdir -p .streamlit
-cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-```
-Then replace `your_key_here` with your actual key.
-
-### Important notes
-- Do not commit your real API key to GitHub.
-- Keep `requirements.txt` in the repo so the host installs the right packages.
-- For Streamlit Cloud, set the secret in the project settings rather than storing actual credentials in source control.
-
----
-
-## 📝 Example Input / Output
-
-**Input Topic:**
-> 5 habits that made me a better software engineer
-
-**Input Reference (paste plain text of a carousel):**
-> Slide 1: Most developers write code. The best ones write *readable* code.
-> Slide 2: Habit 1 — Code review everything, including your own work...
-> ...
-
-**Output (sample):**
 ```json
 {
   "topic": "5 habits that made me a better software engineer",
@@ -192,20 +97,19 @@ Then replace `your_key_here` with your actual key.
     {
       "title": "Hook",
       "content": "I was a mediocre developer for 2 years.\nThen I changed 5 habits.\nHere's what actually worked 👇",
-      "visual": "Split image: messy desk vs clean setup, or 'before/after' code snippet",
+      "visual": "Before/after split: messy desk vs clean setup",
       "is_cta": false
     },
     {
       "title": "Habit 1: Read other people's code",
       "content": "Most devs only read their own code.\nThe best engineers study open-source repos daily.\nIt rewires how you think about problems.",
-      "visual": "Screenshot of a GitHub repo with highlighted, well-structured code",
+      "visual": "GitHub repo screenshot with well-structured, highlighted code",
       "is_cta": false
     },
-    ...
     {
       "title": "Found this useful?",
-      "content": "Follow me for weekly insights on software engineering, career growth, and developer habits.\nSave this post to revisit later 🔖",
-      "visual": "Profile photo with 'Follow' button highlighted, friendly and approachable look",
+      "content": "Follow me for weekly engineering insights.\nSave this post to revisit later 🔖",
+      "visual": "Profile photo with a friendly, approachable look",
       "is_cta": true
     }
   ]
@@ -214,41 +118,27 @@ Then replace `your_key_here` with your actual key.
 
 ---
 
-## 🧠 Design Decisions
+## Design Decisions
 
 | Decision | Reason |
 |---|---|
-| No LangChain/frameworks | Easier to understand, explain, and debug |
-| Prompts in `.txt` files | Easy to edit without touching Python; clear separation |
-| Simple JSON between steps | Each component is independently testable |
-| `gemini-1.5-flash` model | Fast, free tier available, reliable for structured outputs |
-| Reviewer as a separate step | Shows AI workflow thinking without overcomplicating |
-| `{{VARIABLE}}` in prompts | Readable template system without added dependencies |
+| Prompts in `.txt` files | Easy to edit without touching Python code |
+| JSON between stages | Each component is independently testable |
+| Separate reviewer step | Shows multi-step workflow thinking; improves output reliability |
+| No LangChain or frameworks | Keeps the code simple and easy to explain |
 
 ---
 
-## ⚠️ Failure Cases / Limitations
+## Limitations
 
-- **Gemini returns malformed JSON** → The parser tries to recover but may return empty output. Adding a retry loop would help.
-- **Very short references** → With less context, the style profile will be vague and output quality drops.
-- **Hallucinated visuals** → Visual ideas are suggestions only; they need manual review.
-- **Slide count not guaranteed** → Gemini may generate fewer or more slides than requested in rare cases.
-- **No memory across runs** → Each generation is independent; there's no history stored.
-
----
-
-## 🔮 Future Improvements
-
-- Add a retry mechanism when JSON parsing fails
-- Let users edit individual slides before download
-- Export to PowerPoint / Canva template
-- Add prompt A/B testing to compare different writing styles
-- Allow image generation per slide using Imagen API
-- Add a "regenerate this slide" button per slide
+- Output quality depends on the reference examples provided
+- Gemini may occasionally return malformed JSON
+- Slide count may vary slightly from what's requested
+- Visual suggestions are text-only ideas, not actual images
 
 ---
 
-## 👤 Author
+## Author
 
+Mohit Khyalia — IIT Bombay
 Built as a Generative AI internship assignment.
-Demonstrates: modular AI workflows, prompt engineering, multi-step generation, and structured outputs.
