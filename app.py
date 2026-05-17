@@ -3,12 +3,23 @@ import json
 from agents.analyzer import analyze_references
 from agents.writer import write_carousel
 from agents.reviewer import review_carousel
+from utils.gemini_client import get_api_key
 
 # --- Page Config ---
 st.set_page_config(page_title="LinkedIn Carousel Agent", page_icon="🎠", layout="centered")
 
 st.title("🎠 LinkedIn Carousel Generator")
 st.markdown("**AI-powered carousel generation in 3 steps: Analyze → Write → Review**")
+
+# Debug section
+with st.expander("🔧 Debug Info", expanded=False):
+    api_key = get_api_key()
+    if api_key:
+        st.success(f"✅ API Key found (length: {len(api_key)} chars)")
+    else:
+        st.error("❌ GEMINI_API_KEY not found. Set it via:")
+        st.code("export GEMINI_API_KEY=your_key_here  # or add to .env", language="bash")
+
 st.divider()
 
 # --- Inputs ---
@@ -35,7 +46,11 @@ if st.button("🚀 Generate Carousel", type="primary"):
             style_profile = analyze_references(reference_text)
 
         if not style_profile:
-            st.error("Failed to analyze references. Check your API key.")
+            # Show actual error if available
+            if "last_gemini_error" in st.session_state:
+                st.error(f"❌ API Error: {st.session_state.last_gemini_error}")
+            else:
+                st.error("❌ Failed to analyze references. Check your API key and ensure GEMINI_API_KEY is set.")
             st.stop()
 
         st.success("✅ Style profile extracted!")
@@ -47,7 +62,10 @@ if st.button("🚀 Generate Carousel", type="primary"):
             raw_carousel = write_carousel(topic, style_profile, num_slides)
 
         if not raw_carousel:
-            st.error("Failed to generate carousel. Try again.")
+            if "last_gemini_error" in st.session_state:
+                st.error(f"❌ API Error during writing: {st.session_state.last_gemini_error}")
+            else:
+                st.error("❌ Failed to generate carousel. Try again or check your API key.")
             st.stop()
 
         # Step 3: Review

@@ -50,5 +50,12 @@ def call_gemini(prompt: str) -> str:
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:
-        print(f"[Gemini Error] {e}")
+        error_msg = f"[Gemini Error] {type(e).__name__}: {str(e)}"
+        print(error_msg)
+        # Try to provide more context
+        try:
+            import streamlit as st
+            st.session_state.last_gemini_error = error_msg
+        except:
+            pass
         return ""
